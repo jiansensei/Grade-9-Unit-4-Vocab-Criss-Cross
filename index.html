@@ -524,20 +524,20 @@
         document.getElementById("btn-reveal").classList.remove("hidden");
         document.getElementById("answer-section").classList.add("hidden");
       }
-      function startTimer() {
-        timeLeft = 60;
-        document.getElementById("timer-val").innerText = timeLeft;
-        clearInterval(timer);
-        timer = setInterval(() => {
-          timeLeft--;
-          document.getElementById("timer-val").innerText = timeLeft;
-          if (timeLeft <= 0) {
-            clearInterval(timer);
-            timeoutSound.play().catch(() => {});
-            revealAnswer(true);
-          }
-        }, 1000);
-      }
+      // function startTimer() {
+      //   timeLeft = 60;
+      //   document.getElementById("timer-val").innerText = timeLeft;
+      //   clearInterval(timer);
+      //   timer = setInterval(() => {
+      //     timeLeft--;
+      //     document.getElementById("timer-val").innerText = timeLeft;
+      //     if (timeLeft <= 0) {
+      //       clearInterval(timer);
+      //       timeoutSound.play().catch(() => {});
+      //       revealAnswer(true);
+      //     }
+      //   }, 1000);
+      // }
 
       function stopTimer() {
         clearInterval(timer);
