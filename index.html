@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grade 9 Unit 4 VOCABULARY</title>
+
+    <style>
+      body {
+        background-image: url("assets/background.png");
+        background-size: cover;
+        background-position: center;
+        background-color: #002b36;
+        color: #eee8d5;
+        font-family: "Comic Sans MS", "Comic Sans", cursive;
+        text-align: center;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .page {
+        background: rgba(0, 43, 54, 0.9);
+        padding: 30px;
+        border: 4px solid #586e75;
+        width: 90%;
+        max-width: 800px;
+      }
+      .hidden {
+        display: none !important;
+      }
+
+      #japanese-text {
+        font-size: 30px;
+        color: #b58900;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      #question-text {
+        font-size: 50px;
+        line-height: 1.1;
+        margin: 10px 0;
+        color: #fff;
+      }
+      #score-board {
+        font-size: 1.5rem;
+        color: #b58900;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      .tnt-timer {
+        background-image: url("assets/tnt.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: transparent;
+        color: white;
+        font-weight: bold;
+        width: 150px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px auto;
+        font-size: 2rem;
+      }
+
+      .chest-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 20px;
+        justify-items: center;
+      }
+      .chest-btn {
+        width: 120px;
+        height: 120px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        border: none;
+        cursor: pointer;
+        background-color: transparent;
+      }
+
+      button {
+        background: #268bd2;
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        cursor: pointer;
+        margin-top: 10px;
+        font-size: 1.2rem;
+        font-family: "Comic Sans MS", "Comic Sans", cursive;
+      }
+      .btn-quit {
+        background: #dc322f;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="page-start" class="page">
+      <h1 style="font-size: 60px">GRADE 9 Unit4 <br />(単語)VOCABULARY</h1>
+      <button onclick="showPage('page-rules')">HOW TO PLAY</button><br />
+      <button
+        onclick="
+          initGame('normal');
+          showPage('page-quiz');
+        "
+      >
+        PLAY</button
+      ><br />
+      <button
+        style="background: #859900"
+        onclick="
+          initGame('extra');
+          showPage('page-quiz');
+        "
+      >
+        EXTRA CHALLENGE
+      </button>
+    </div>
+
+    <div id="page-rules" class="page hidden">
+      <h2>RULES</h2>
+      <p>
+        Answer correctly to open a chest! <br />正しく答えて、宝箱を開けよう！
+      </p>
+      <button onclick="showPage('page-start')">BACK</button>
+    </div>
+
+    <div id="page-quiz" class="page hidden">
+      <div id="score-board">
+        Question: <span id="q-current"></span> / <span id="q-total"></span>
+      </div>
+      <div class="tnt-timer"><span id="timer-val">60</span></div>
+      <div id="japanese-text"></div>
+      <div id="question-text"></div>
+      <button id="btn-reveal" onclick="revealAnswer(false)">
+        REVEAL ANSWER
+      </button>
+      <div id="answer-section" class="hidden">
+        <h1 id="answer-text" style="color: red; font-size: 3rem"></h1>
+        <button id="btn-win" onclick="showPage('page-chest')">
+          CHOOSE A CHEST
+        </button>
+        <button id="btn-next" class="hidden" onclick="checkGameOver()">
+          NEXT QUESTION
+        </button>
+      </div>
+      <br /><button class="btn-quit" onclick="quitGame()">QUIT GAME</button>
+    </div>
+
+    <div id="page-chest" class="page hidden">
+      <h2>CHOOSE A CHEST</h2>
+      <div class="chest-grid">
+        <button
+          class="chest-btn"
+          style="background-image: url(&quot;assets/red.png&quot;)"
+          onclick="win()"
+        ></button>
+        <button
+          class="chest-btn"
+          style="background-image: url(&quot;assets/blue.png&quot;)"
+          onclick="win()"
+        ></button>
+        <button
+          class="chest-btn"
+          style="background-image: url(&quot;assets/yellow.png&quot;)"
+          onclick="win()"
+        ></button>
+        <button
+          class="chest-btn"
+          style="background-image: url(&quot;assets/green.png&quot;)"
+          onclick="win()"
+        ></button>
+      </div>
+    </div>
+
+    <div id="page-reward" class="page hidden">
+      <h2 id="win-text" style="font-size: 2.5rem">YOU WON!</h2>
+      <div
+        id="win-icon"
+        style="
+          width: 200px;
+          height: 200px;
+          background-size: contain;
+          background-repeat: no-repeat;
+          margin: 0 auto;
+        "
+      ></div>
+      <p id="reward-desc" style="font-size: 1.5rem; margin: 20px"></p>
+      <button onclick="checkGameOver()">NEXT QUESTION</button>
+    </div>
+
+    <div id="page-end" class="page hidden">
+      <h1 id="end-title" style="font-size: 3rem">GAME OVER</h1>
+      <p id="end-msg">Thanks for playing!</p>
+      <button onclick="showPage('page-start')">RESTART</button>
+    </div>
+
+    <script>
+      // Audio Setup
+      const bgMusic = new Audio("assets/bg_music.mp3");
+      const chestSound = new Audio("assets/chest_sound.mp3");
+      const tickSound = new Audio("assets/tick_sound.mp3");
+      const timeoutSound = new Audio("assets/timeout_sound.mp3");
+      // const winSound = new Audio("assets/win_sound.mp3");
+      const revealSound = new Audio("assets/reveal_sound.mp3"); // Ensure this file exists
+      bgMusic.loop = true;
+
+      // --- DATA (Keep this inside the script!) ---
+      const questions = [
+        // {
+        //   j: "用意ができている",
+        //   qNormal: "用意ができている",
+        //   aNormal: "prepapred",
+
+        //   jExtra: "あなたの好きな先生はだれですか。",
+        //   qExtra: "Who is your favorite teacher?",
+        //   aExtra: "My favorite teacher is ____.",
+        // },
+        {
+          j: "よういが できている",
+          qNormal: "用意ができている",
+          aNormal: "prepared",
+        },
+        {
+          j: "さいがい",
+          qNormal: "災害",
+          aNormal: "disaster",
+        },
+        {
+          j: "ひなんじょ",
+          qNormal: "避難所",
+          aNormal: "shelter",
+        },
+        {
+          j: "～を たくわえる",
+          qNormal: "～を蓄える",
+          aNormal: "store",
+        },
+        {
+          j: "ばあい",
+          qNormal: "場合",
+          aNormal: "case",
+        },
+        {
+          j: "しょうかき",
+          qNormal: "消火器",
+          aNormal: "extinguisher",
+        },
+        {
+          j: "～の ばあいには",
+          qNormal: "～の場合には",
+          aNormal: "in case of",
+        },
+        {
+          j: "doの かこぶんし",
+          qNormal: "doの過去分詞",
+          aNormal: "done",
+        },
+        {
+          j: "じゅんびをする、そなえる",
+          qNormal: "準備をする、備える",
+          aNormal: "prepare",
+        },
+        {
+          j: "きんきゅうじたい",
+          qNormal: "緊急事態",
+          aNormal: "emergency",
+        },
+        {
+          j: "どうぐ いっしき",
+          qNormal: "道具一式",
+          aNormal: "kit",
+        },
+        {
+          j: "～を おすすめする",
+          qNormal: "～をおすすめする",
+          aNormal: "recommend",
+        },
+        {
+          j: "じしん",
+          qNormal: "地震",
+          aNormal: "earthquake",
+        },
+        {
+          j: "we haveの たんしゅくけい",
+          qNormal: "we haveの短縮形",
+          aNormal: "we've",
+        },
+        {
+          j: "has notの たんしゅくけい",
+          qNormal: "has notの短縮形",
+          aNormal: "hasn't",
+        },
+        {
+          j: "いくつかの",
+          qNormal: "いくつかの",
+          aNormal: "several",
+        },
+        {
+          j: "かけはし、はし",
+          qNormal: "架け橋、橋",
+          aNormal: "bridge",
+        },
+        {
+          j: "～の あいだで",
+          qNormal: "～の間で",
+          aNormal: "between",
+        },
+        {
+          j: "～を はげます",
+          qNormal: "～を励ます",
+          aNormal: "encourage",
+        },
+        {
+          j: "せいかく",
+          qNormal: "性格",
+          aNormal: "personality",
+        },
+        {
+          j: "おそう",
+          qNormal: "襲う",
+          aNormal: "hit",
+        },
+        {
+          j: "～を げんきづける",
+          qNormal: "～を元気づける",
+          aNormal: "comfort",
+        },
+        {
+          j: "ちかくの",
+          qNormal: "近くの",
+          aNormal: "nearby",
+        },
+        {
+          j: "あんぜんな",
+          qNormal: "安全な",
+          aNormal: "safe",
+        },
+        {
+          j: "つねに",
+          qNormal: "常に",
+          aNormal: "all the time",
+        },
+        {
+          j: "rideの かこけい",
+          qNormal: "rideの過去形",
+          aNormal: "rode",
+        },
+        {
+          j: "じてんしゃ",
+          qNormal: "自転車",
+          aNormal: "bicycle",
+        },
+        {
+          j: "～に むかって",
+          qNormal: "～に向かって",
+          aNormal: "toward",
+        },
+        {
+          j: "あぱーと",
+          qNormal: "アパート",
+          aNormal: "apartment",
+        },
+        {
+          j: "catchの かこけい",
+          qNormal: "catchの過去形",
+          aNormal: "caught",
+        },
+        {
+          j: "つなみ",
+          qNormal: "津波",
+          aNormal: "tsunami",
+        },
+        {
+          j: "とつぜんの",
+          qNormal: "突然の",
+          aNormal: "sudden",
+        },
+        {
+          j: "しらせ",
+          qNormal: "知らせ",
+          aNormal: "news",
+        },
+        {
+          j: "まもなく",
+          qNormal: "まもなく",
+          aNormal: "shortly",
+        },
+        {
+          j: "こーなー",
+          qNormal: "コーナー",
+          aNormal: "corner",
+        },
+        {
+          j: "こうりゅう",
+          qNormal: "交流",
+          aNormal: "exchange",
+        },
+        {
+          j: "ぷろぐらむ",
+          qNormal: "プログラム",
+          aNormal: "program",
+        },
+        {
+          j: "～を ささえる、しえんする",
+          qNormal: "～を支える、支援する",
+          aNormal: "support",
+        },
+        {
+          j: "ふつうの、つうじょうの",
+          qNormal: "ふつうの、通常の",
+          aNormal: "ordinary",
+        },
+        {
+          j: "きき",
+          qNormal: "危機",
+          aNormal: "crisis",
+        },
+        // ... dagdagan ang lahat ng items gamit ang pattern na ito
+      ];
+
+      const rewards = {
+        ROW: {
+          img: "row.png",
+          desc: "All row sits down<br>(横の列の全員が座る)",
+        },
+        LINE: {
+          img: "line.png",
+          desc: "All column sits down<br>(縦の列の全員が座る)",
+        },
+        "CRISS CROSS": {
+          img: "crisscross.png",
+          desc: "Diagonal sits<br>(横と縦の列の全員が座れる)",
+        },
+        "ONLY ME": { img: "onlyme.png", desc: "You sit<br>(あなただけ座る)" },
+        BOYS: {
+          img: "boys.png",
+          desc: "All boys sit down and all girls stand up<br>(男の子全員が座り、女の子全員が立つ)",
+        },
+        GIRLS: {
+          img: "girls.png",
+          desc: "All girls sit down and all boys stand up<br>(女の子全員が座り、男の子全員が立つ)",
+        },
+
+        "JANKEN BATTLE": {
+          img: "janken.jpg",
+          desc: "Play rock, scissors, paper. You and other who wins or is draw, sit down. <br>(じゃんけんをします。あなたに勝った人か、あいこの人は座ることができます。)",
+        },
+      };
+
+      let timer,
+        timeLeft = 60,
+        currentQCount = 1,
+        // totalQuestions = 40,
+        currentMode = "normal",
+        currentPool = [];
+
+      function stopAllSounds() {
+        [bgMusic, chestSound, tickSound, timeoutSound].forEach((s) => {
+          s.pause();
+          s.currentTime = 0;
+        });
+      }
+
+      function initGame(mode, num) {
+        currentMode = mode;
+        totalQuestions = num || questions.length; // Kung walang ibinigay, kukunin ang total length ng array
+        currentQCount = 1;
+        currentPool = [...questions].sort(() => Math.random() - 0.5);
+        document.getElementById("q-total").innerText = totalQuestions;
+        document.getElementById("q-current").innerText = currentQCount;
+
+        bgMusic.play().catch((e) => console.log("Music blocked:", e));
+        loadQuestion();
+      }
+
+      function win() {
+        chestSound.play().catch(() => {});
+        const keys = Object.keys(rewards);
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        const reward = rewards[randomKey];
+
+        document.getElementById("win-text").innerText = randomKey;
+        document.getElementById("win-icon").style.backgroundImage =
+          `url('assets/${reward.img}')`;
+        document.getElementById("reward-desc").innerHTML = reward.desc;
+
+        setTimeout(() => winSound.play().catch(() => {}), 500);
+        showPage("page-reward");
+      }
+
+      function quitGame() {
+        stopTimer();
+        stopAllSounds();
+        showPage("page-end");
+      }
+      function loadQuestion() {
+        const rand = currentPool.pop();
+        if (!rand) {
+          currentPool = [...questions].sort(() => Math.random() - 0.5);
+          loadQuestion();
+          return;
+        }
+
+        if (currentMode === "extra") {
+          // Para sa Extra Challenge
+          document.getElementById("japanese-text").innerText = rand.jExtra;
+          document.getElementById("question-text").innerText = rand.qExtra;
+          document.getElementById("answer-text").innerText = rand.aExtra;
+        } else {
+          // Para sa Normal Mode
+          document.getElementById("japanese-text").innerText = rand.j;
+          document.getElementById("question-text").innerText = rand.qNormal;
+          document.getElementById("answer-text").innerText = rand.aNormal;
+        }
+
+        document.getElementById("btn-reveal").classList.remove("hidden");
+        document.getElementById("answer-section").classList.add("hidden");
+      }
+      function startTimer() {
+        timeLeft = 60;
+        document.getElementById("timer-val").innerText = timeLeft;
+        clearInterval(timer);
+        timer = setInterval(() => {
+          timeLeft--;
+          document.getElementById("timer-val").innerText = timeLeft;
+          if (timeLeft <= 0) {
+            clearInterval(timer);
+            timeoutSound.play().catch(() => {});
+            revealAnswer(true);
+          }
+        }, 1000);
+      }
+
+      function stopTimer() {
+        clearInterval(timer);
+      }
+
+      function revealAnswer(isTimeout) {
+        // 1. Stop the music when the reveal happens
+        pauseMusic();
+        // Play the sound only if it's NOT a timeout (player clicked the button)
+        if (!isTimeout) {
+          revealSound.play().catch(() => {});
+        }
+
+        stopTimer();
+        document.getElementById("btn-reveal").classList.add("hidden");
+        document.getElementById("answer-section").classList.remove("hidden");
+
+        const btnWin = document.getElementById("btn-win");
+        const btnNext = document.getElementById("btn-next");
+
+        if (isTimeout) {
+          btnWin.classList.add("hidden");
+          btnNext.classList.remove("hidden");
+        } else {
+          btnWin.classList.remove("hidden");
+          btnNext.classList.add("hidden");
+        }
+      }
+
+      function showPage(pageId) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.add("hidden"));
+        document.getElementById(pageId).classList.remove("hidden");
+        if (pageId === "page-quiz") startTimer();
+      }
+
+      function checkGameOver() {
+        if (currentQCount >= totalQuestions) {
+          quitGame();
+        } else {
+          currentQCount++;
+          document.getElementById("q-current").innerText = currentQCount;
+          loadQuestion();
+
+          // Resume the music when the next question starts
+          bgMusic.play().catch(() => {});
+
+          showPage("page-quiz");
+        }
+      }
+      function pauseMusic() {
+        bgMusic.pause();
+      }
+
+      function resumeMusic() {
+        // Only resume if you have a way to track the game is still active
+        bgMusic.play().catch(() => {});
+      }
+    </script>
+  </body>
+</html>
